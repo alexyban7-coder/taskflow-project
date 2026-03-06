@@ -1,0 +1,264 @@
+/* 1. CONFIGURACIÓN GLOBAL Y VARIABLES (:root) */
+:root {
+    /* Paleta de Celestes */
+    --celeste-primario: #00a8e8;    /* Azul brillante para acciones */
+    --celeste-claro: #e1f5fe;       /* Fondos de etiquetas */
+    --celeste-borde: #b3e5fc;       /* Bordes de botones y tarjetas */
+    --celeste-oscuro: #0077b6;      /* Texto principal y títulos */
+    
+    /* Colores de Estado (Prioridades) */
+    --prio-alta: #ff4d4d;
+    --prio-media: #ffbd33;
+    --prio-baja: #2ecc71;
+
+    /* Neutros y Fondos */
+    --bg-body: #f0f9ff;             
+    --bg-card: #ffffff;
+    --text-main: #1f2937;
+    
+    /* Estructura */
+    --radius: 12px;
+    --gap-btn: 12px;
+    --shadow: 0 4px 15px rgba(0, 168, 232, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/* 2. RESET Y ESTILOS BASE */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-body);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    padding: 40px 20px;
+}
+
+/* 3. LAYOUT (ESTRUCTURA PRINCIPAL) */
+.contenedor-de-lista {
+    width: 100%;
+    max-width: 950px;
+    display: grid;
+    grid-template-columns: 260px 1fr; /* Sidebar y Contenido */
+    gap: 25px;
+}
+
+header {
+    grid-column: 1 / -1; /* Ocupa todo el ancho */
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+header h1 {
+    color: var(--celeste-oscuro);
+    font-size: 2.2rem;
+    border-bottom: 3px solid var(--celeste-primario);
+    display: inline-block;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+}
+
+/* 4. SIDEBAR (CATEGORÍAS) */
+aside {
+    background: var(--bg-card);
+    border: 2px solid var(--celeste-borde);
+    border-radius: var(--radius);
+    padding: 20px;
+    height: fit-content;
+}
+
+.ventas-box h2 {
+    color: var(--celeste-oscuro);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.ventas-box ul {
+    list-style: none;
+}
+
+.ventas-box li {
+    display: block;
+    background: var(--bg-card);
+    border: 2px solid var(--celeste-borde);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: var(--gap-btn);
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--celeste-oscuro);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.ventas-box li:hover, .ventas-box li.active {
+    background-color: var(--celeste-primario);
+    border-color: var(--celeste-primario);
+    color: white;
+}
+
+/* 5. FORMULARIO DE NUEVA TAREA */
+.add-task-container {
+    background: var(--bg-card);
+    padding: 20px;
+    border: 2px solid var(--celeste-borde);
+    border-radius: var(--radius);
+    margin-bottom: 25px;
+    box-shadow: var(--shadow);
+}
+
+#task-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#task-form input, #task-form select {
+    padding: 10px;
+    border: 1px solid var(--celeste-borde);
+    border-radius: 8px;
+    outline: none;
+    flex: 1;
+    min-width: 120px;
+}
+
+#task-form button {
+    background: var(--celeste-primario);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+}
+
+#task-form button:hover {
+    background: var(--celeste-oscuro);
+    transform: translateY(-2px);
+}
+
+/* 6. LISTA DE TAREAS (ITEMS) */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    border: 2px solid var(--celeste-borde);
+    border-radius: var(--radius);
+    padding: 15px 20px;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.task-item:hover {
+    border-color: var(--celeste-primario);
+}
+
+.task-conten {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.TITle {
+    font-weight: bold;
+    color: var(--text-main);
+}
+
+/* Badges (Categoría y Prioridad) */
+.category, .priority {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.category {
+    background: var(--celeste-claro);
+    color: var(--celeste-oscuro);
+}
+
+.priority {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+}
+
+/* 7. BOTÓN ELIMINAR Y ESTADOS */
+.btn-delete {
+    background: #fff5f5;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.btn-delete:hover {
+    background: #ff4d4d;
+    color: white;
+}
+
+/* 8. MEDIA QUERIES (RESPONSIVO) */
+@media (max-width: 800px) {
+    .contenedor-de-lista {
+        grid-template-columns: 1fr; /* Columna única */
+    }
+
+    aside {
+        width: 100%;
+    }
+
+    .ventas-box ul {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .ventas-box li {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+    .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .btn-delete {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+
+   
+
+
+
+
+
+
+
+
+
+
+

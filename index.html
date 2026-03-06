@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Lista de Tareas</title>
+    <link rel="stylesheet" href="STYLE.css">
+</head>
+<body>
+
+    <div class="contenedor-de-lista">
+        
+        <header>
+            <h1>Lista de tareas</h1>
+        </header>
+
+        <!-- Sidebar: Solo filtro por Categorías -->
+        <aside>
+            <div class="ventas-box">
+                <h2>Categorías</h2>
+                <ul>
+                    <li data-filter="all" class="active">Todos</li>
+                    <li data-filter="hogar">Hogar</li>
+                    <li data-filter="personal">Personal</li>
+                    <li data-filter="estudios">Estudios</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main>
+            <!-- crea los filtros para el formulario -->
+            <section class="add-task-container">
+                <form id="task-form">
+                    <input type="text" id="task-input" placeholder="¿Qué tienes pendiente?" required>
+                    
+                    <select id="category-select">
+                        <option value="hogar">Hogar</option>
+                        <option value="personal">Personal</option>
+                        <option value="estudios">Estudios</option>
+                    </select>
+
+                    <select id="priority-select">
+                        <option value="alta">Alta</option>
+                        <option value="media">Media</option>
+                        <option value="baja">Baja</option>
+                    </select>
+
+                    <button type="submit" id="add-btn">Agregar</button>
+                </form>
+            </section>
+
+            <!-- Lista de Tareas Dinámica -->
+            <section class="task-list" id="task-list">
+                
+            </section>
+        </main>
+
+    </div>
+           <!-- esto es lo que conecta -->
+    <script src="app.js"></script>
+</body>
+</html>
