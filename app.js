@@ -1,98 +1,64 @@
-/* 1. SELECCIÓN DE ELEMENTOS DEL DOM */
-const taskForm = document.getElementById('task-form');
-const taskInput = document.getElementById('task-input');
-const categorySelect = document.getElementById('category-select');
-const prioritySelect = document.getElementById('priority-select');
-const taskList = document.getElementById('task-list');
-const categoryButtons = document.querySelectorAll('.ventas-box li');
+// --- MODO OSCURO ---
+const darkToggle = document.getElementById('dark-toggle');
+const themeIcon = document.getElementById('theme-icon');
 
-// Array principal de tareas (se carga de LocalStorage al iniciar)
-let tasks = JSON.parse(localStorage.getItem('taskflow_tasks')) || [];
-
-/* 2. FUNCIONES PRINCIPALES */
-
-// Cargar tareas al iniciar la aplicación (Punto 5)
-document.addEventListener('DOMContentLoaded', () => {
-    renderTasks();
-});
-
-// Función para añadir tareas (Punto 2)
-taskForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const newTask = {
-        id: Date.now(), // ID único basado en tiempo
-        text: taskInput.value,
-        category: categorySelect.value,
-        priority: prioritySelect.value
-    };
-
-    tasks.push(newTask);
-    updateAppState();
-    taskForm.reset(); // Limpia el formulario
-});
-
-// Función para eliminar tareas (Punto 3)
-window.deleteTask = (id) => {
-    tasks = tasks.filter(task => task.id !== id);
-    updateAppState();
+const toggleTheme = () => {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    themeIcon.innerText = isDark ? '☀️' : '🌙';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
 };
 
-// Guardar en LocalStorage y Refrescar Vista (Punto 4)
-function updateAppState() {
-    localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
-    renderTasks();
+if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.classList.add('dark');
+    themeIcon.innerText = '☀️';
 }
+darkToggle.addEventListener('click', toggleTheme);
 
-/* 3. RENDERIZADO (DIBUJAR EN EL HTML) */
+// --- LÓGICA DE TAREAS ---
+const taskForm = document.getElementById('task-form');
+const taskList = document.getElementById('task-list');
 
-function renderTasks(filter = 'all') {
-    taskList.innerHTML = '';
+taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const text = document.getElementById('task-input').value;
+    const category = document.getElementById('category-select').value;
+    const priority = document.getElementById('priority-select').value;
 
-    // Filtrar tareas según la categoría seleccionada en el aside
-    const filteredTasks = filter === 'all' 
-        ? tasks 
-        : tasks.filter(t => t.category === filter);
+    // Colores según prioridad
+    const priorityColors = {
+        alta: "border-l-red-500",
+        media: "border-l-yellow-500",
+        baja: "border-l-green-500"
+    };
 
-    filteredTasks.forEach(task => {
-        const taskDiv = document.createElement('div');
-        taskDiv.className = 'task-item';
-        
-        taskDiv.innerHTML = `
-            <div class="task-conten">
-                <span class="TITle">${task.text}</span>
-                <span class="category">${task.category}</span>
-                <span class="priority" style="border-left: 4px solid ${getPriorityColor(task.priority)}">
-                    ${task.priority}
-                </span>
+    const taskCard = document.createElement('div');
+    taskCard.className = `flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border-l-4 ${priorityColors[priority]} dark:border-y-slate-700 dark:border-r-slate-700 transition-all`;
+    
+    taskCard.innerHTML = `
+        <div class="flex flex-col">
+            <span class="text-gray-800 dark:text-gray-100 font-medium">${text}</span>
+            <div class="flex gap-2 mt-1">
+                <span class="text-[10px] uppercase font-bold text-blue-500 tracking-tighter">${category}</span>
+                <span class="text-[10px] uppercase font-bold text-gray-400">•</span>
+                <span class="text-[10px] uppercase font-bold text-gray-400">${priority}</span>
             </div>
-            <button class="btn-delete" onclick="deleteTask(${task.id})">Eliminar</button>
-        `;
-        taskList.appendChild(taskDiv);
+        </div>
+        <button class="delete-btn text-gray-300 hover:text-red-500 transition-colors p-2">
+            <svg xmlns="http://www.w3.org" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+        </button>
+    `;
+
+    taskCard.querySelector('.delete-btn').addEventListener('click', () => {
+        taskCard.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => taskCard.remove(), 200);
     });
-}
 
-// Colores visuales para las prioridades
-function getPriorityColor(prio) {
-    switch(prio) {
-        case 'alta': return '#ff4d4d';
-        case 'media': return '#ffbd33';
-        case 'baja': return '#2ecc71';
-        default: return '#00a8e8';
-    }
-}
-
-/* 4. LÓGICA DE LOS FILTROS (SIDEBAR) */
-
-categoryButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Cambiar estado visual del botón activo
-        categoryButtons.forEach(li => li.classList.remove('active'));
-        btn.classList.add('active');
-
-        // Filtrar
-        const selectedFilter = btn.getAttribute('data-filter');
-        renderTasks(selectedFilter);
-    });
+    taskList.prepend(taskCard);
+    taskForm.reset();
 });
+
 
