@@ -1,64 +1,115 @@
-// --- MODO OSCURO ---
+// --- SELECTORES ---
+const taskForm = document.getElementById('task-form');
+const taskList = document.getElementById('task-list');
 const darkToggle = document.getElementById('dark-toggle');
 const themeIcon = document.getElementById('theme-icon');
+const filterBtns = document.querySelectorAll('.filter-btn');
 
-const toggleTheme = () => {
-    document.documentElement.classList.toggle('dark');
-    const isDark = document.documentElement.classList.contains('dark');
-    themeIcon.innerText = isDark ? '☀️' : '🌙';
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-};
+let filtroActual = 'all';
 
+// --- 1. MODO OSCURO (LocalStorage) ---
 if (localStorage.getItem('theme') === 'dark') {
     document.documentElement.classList.add('dark');
     themeIcon.innerText = '☀️';
 }
-darkToggle.addEventListener('click', toggleTheme);
 
-// --- LÓGICA DE TAREAS ---
-const taskForm = document.getElementById('task-form');
-const taskList = document.getElementById('task-list');
+darkToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    themeIcon.innerText = isDark ? '☀️' : '🌙';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
 
-taskForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+// --- 2. GESTIÓN DE DATOS ---
+function guardarTareas() {
+    const tareas = [];
+    document.querySelectorAll('.task-card').forEach(card => {
+        tareas.push({
+            texto: card.querySelector('.task-text').innerText,
+            categoria: card.getAttribute('data-category'),
+            prioridad: card.getAttribute('data-priority')
+        });
+    });
+    localStorage.setItem('mis_tareas_v2', JSON.stringify(tareas));
+}
+
+function cargarTareas() {
+    const datos = localStorage.getItem('mis_tareas_v2');
+    if (datos) {
+        JSON.parse(datos).reverse().forEach(t => renderizarTarea(t.texto, t.categoria, t.prioridad));
+    }
+}
+
+// --- 3. FILTRADO DINÁMICO ---
+function aplicarFiltro(categoria) {
+    filtroActual = categoria;
     
-    const text = document.getElementById('task-input').value;
-    const category = document.getElementById('category-select').value;
-    const priority = document.getElementById('priority-select').value;
+    filterBtns.forEach(btn => {
+        if (btn.getAttribute('data-filter') === categoria) {
+            btn.classList.add('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600');
+            btn.classList.remove('text-gray-500', 'dark:text-gray-400');
+        } else {
+            btn.classList.remove('text-blue-600', 'dark:text-blue-400', 'border-b-2', 'border-blue-600');
+            btn.classList.add('text-gray-500', 'dark:text-gray-400');
+        }
+    });
 
-    // Colores según prioridad
-    const priorityColors = {
-        alta: "border-l-red-500",
-        media: "border-l-yellow-500",
-        baja: "border-l-green-500"
-    };
+    document.querySelectorAll('.task-card').forEach(card => {
+        const cat = card.getAttribute('data-category');
+        card.style.display = (categoria === 'all' || cat === categoria) ? 'flex' : 'none';
+    });
+}
 
-    const taskCard = document.createElement('div');
-    taskCard.className = `flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border-l-4 ${priorityColors[priority]} dark:border-y-slate-700 dark:border-r-slate-700 transition-all`;
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => aplicarFiltro(btn.getAttribute('data-filter')));
+});
+
+// --- 4. RENDERIZADO ---
+function renderizarTarea(text, category, priority) {
+    const colors = { alta: "border-l-red-500", media: "border-l-yellow-500", baja: "border-l-green-500" };
+    const card = document.createElement('div');
     
-    taskCard.innerHTML = `
+    card.setAttribute('data-category', category);
+    card.setAttribute('data-priority', priority);
+    card.className = `task-card flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border-l-4 ${colors[priority]} dark:border-y-slate-700 dark:border-r-slate-700 transition-all mb-3`;
+    
+    if (filtroActual !== 'all' && category !== filtroActual) card.style.display = 'none';
+
+    card.innerHTML = `
         <div class="flex flex-col">
-            <span class="text-gray-800 dark:text-gray-100 font-medium">${text}</span>
-            <div class="flex gap-2 mt-1">
-                <span class="text-[10px] uppercase font-bold text-blue-500 tracking-tighter">${category}</span>
-                <span class="text-[10px] uppercase font-bold text-gray-400">•</span>
-                <span class="text-[10px] uppercase font-bold text-gray-400">${priority}</span>
+            <span class="task-text text-gray-800 dark:text-gray-100 font-medium">${text}</span>
+            <div class="flex gap-2 mt-1 text-[10px] font-bold uppercase tracking-wider">
+                <span class="text-blue-500">${category}</span>
+                <span class="text-gray-300 dark:text-slate-600">•</span>
+                <span class="text-gray-400 dark:text-slate-500">${priority}</span>
             </div>
         </div>
-        <button class="delete-btn text-gray-300 hover:text-red-500 transition-colors p-2">
-            <svg xmlns="http://www.w3.org" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
+        <button class="del-btn text-gray-300 hover:text-red-500 transition-all p-2">
+            🗑️
         </button>
     `;
 
-    taskCard.querySelector('.delete-btn').addEventListener('click', () => {
-        taskCard.classList.add('opacity-0', 'scale-95');
-        setTimeout(() => taskCard.remove(), 200);
+    card.querySelector('.del-btn').addEventListener('click', () => {
+        card.remove();
+        guardarTareas();
     });
 
-    taskList.prepend(taskCard);
+    taskList.prepend(card);
+}
+
+taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = document.getElementById('task-input').value;
+    const cat = document.getElementById('category-select').value;
+    const prio = document.getElementById('priority-select').value;
+
+    renderizarTarea(text, cat, prio);
+    guardarTareas();
     taskForm.reset();
 });
+
+document.addEventListener('DOMContentLoaded', cargarTareas);
+
+
 
 

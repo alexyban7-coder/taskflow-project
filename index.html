@@ -9,38 +9,48 @@
         tailwind.config = { darkMode: 'class' }
     </script>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 min-h-screen transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-slate-900 min-h-screen transition-colors duration-300 flex justify-center p-4">
 
-    <div class="max-w-3xl mx-auto p-4 md:p-12">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Lista de tareas</h1>
-            <button id="dark-toggle" class="p-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border dark:border-slate-700">
+    <div class="w-full max-w-2xl mt-6">
+        
+        <!-- Header con Título y Modo Oscuro -->
+        <header class="flex justify-between items-start mb-2">
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white tracking-tight">Lista de tareas</h1>
+                <!-- Filtros para las tareas -->
+                <nav id="filter-container" class="flex gap-4 mt-2">
+                    <button data-filter="all" class="filter-btn text-sm font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 transition-all">Todos</button>
+                    <button data-filter="hogar" class="filter-btn text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-all">Hogar</button>
+                    <button data-filter="personal" class="filter-btn text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-all">Personal</button>
+                    <button data-filter="estudios" class="filter-btn text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-all">Estudios</button>
+                </nav>
+            </div>
+            <button id="dark-toggle" class="p-2 bg-white dark:bg-slate-800 shadow-sm rounded-xl border dark:border-slate-700">
                 <span id="theme-icon">🌙</span>
             </button>
         </header>
 
-        <!-- Formulario Adaptado a Móviles -->
+        <hr class="border-gray-200 dark:border-slate-700 mb-8">
+
+        <!-- Formulario de Entrada -->
         <section class="mb-10">
-            <form id="task-form" class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col gap-3 border dark:border-slate-700">
-                
-                <input type="text" id="task-input" placeholder="¿Qué sigue?" required
+            <form id="task-form" class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl flex flex-col gap-3 border dark:border-slate-700">
+                <input type="text" id="task-input" placeholder="¿Qué tienes pendiente?" required
                     class="p-3 bg-gray-50 dark:bg-slate-700 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                 
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    <select id="category-select" class="bg-gray-50 dark:bg-slate-700 dark:text-white p-3 rounded-xl text-sm outline-none">
-                        <option value="hogar">🏠Hogar</option>
-                        <option value="personal">🍵Personal</option>
+                    <select id="category-select" class="bg-gray-50 dark:bg-slate-700 dark:text-white p-3 rounded-xl text-sm outline-none cursor-pointer font-medium">
+                        <option value="hogar">🏠 Hogar</option>
+                        <option value="personal">👤 Personal</option>
                         <option value="estudios">📚 Estudios</option>
                     </select>
 
-                    <select id="priority-select" class="bg-gray-50 dark:bg-slate-700 dark:text-white p-3 rounded-xl text-sm outline-none font-bold">
-                        <option value="alta" class="text-red-500">🔴 Alta</option>
-                        <option value="media" class="text-yellow-500" selected>🟡 Media</option>
-                        <option value="baja" class="text-green-500">🟢 Baja</option>
+                    <select id="priority-select" class="bg-gray-50 dark:bg-slate-700 dark:text-white p-3 rounded-xl text-sm outline-none font-bold cursor-pointer">
+                        <option value="alta">🔴 Alta</option>
+                        <option value="media" selected>🟡 Media</option>
+                        <option value="baja">🟢 Baja</option>
                     </select>
 
-                    <!-- Botón ocupa 2 columnas en móvil, 1 en desktop -->
                     <button type="submit" class="col-span-2 md:col-span-1 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all active:scale-95 py-3 md:py-0">
                         Añadir
                     </button>
@@ -48,13 +58,13 @@
             </form>
         </section>
 
-        <!-- Lista -->
+        <!-- Contenedor de Tareas -->
         <div id="task-list" class="space-y-3"></div>
     </div>
 
     <script src="app.js"></script>
-    
-
-    <
 </body>
 </html>
+
+
+
